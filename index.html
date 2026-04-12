@@ -1,153 +1,88 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Manajemen Saldo Lokal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .nav-pills .nav-link { border-radius: 10px; font-weight: 500; }
-        .stat-card { color: white; transition: 0.3s; }
-        .stat-card:hover { transform: scale(1.02); }
-        .bg-cash { background: linear-gradient(135deg, #28a745, #85d08a); }
-        .bg-bri1 { background: linear-gradient(135deg, #007bff, #66b2ff); }
-        .bg-bri2 { background: linear-gradient(135deg, #6610f2, #9d72e9); }
-        .bg-total { background: linear-gradient(135deg, #343a40, #6c757d); }
-        .table-container { max-height: 400px; overflow-y: auto; }
-        .selisih-plus { color: #28a745; font-weight: bold; }
-        .selisih-minus { color: #dc3545; font-weight: bold; }
-    </style>
-</head>
-<body>
+<h3>Input Data</h3>
+<input type="date" id="tgl">
+<input type="number" id="i_tunai" placeholder="Tunai">
+<input type="number" id="i_bri1" placeholder="BRI1">
+<input type="number" id="i_bri2" placeholder="BRI2">
+<input type="number" id="i_elang" placeholder="Elang">
+<input type="number" id="i_dana" placeholder="DANA">
+<input type="number" id="i_liga" placeholder="Liga">
+<button onclick="simpan()">Simpan Online</button>
+</div>
 
-<div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-11">
-            
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold text-primary mb-0"><i class="bi bi-bank2 me-2"></i>Aplikasi Saldo Mandiri</h4>
-                <div class="btn-group">
-                    <button class="btn btn-outline-success btn-sm" onclick="exportKeExcel()"><i class="bi bi-file-earmark-excel"></i> Export CSV</button>
-                    <button class="btn btn-outline-danger btn-sm" onclick="hapusSemuaData()"><i class="bi bi-trash"></i> Reset</button>
-                </div>
-            </div>
+<div class="card">
+<h3>Riwayat</h3>
+<div id="list"></div>
+</div>
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-3 col-6">
-                    <div class="card stat-card bg-cash p-3">
-                        <small>Total Cash</small>
-                        <h4 id="dash-cash" class="mb-0">Rp 0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="card stat-card bg-bri1 p-3">
-                        <small>Saldo BRI 1</small>
-                        <h4 id="dash-bri1" class="mb-0">Rp 0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="card stat-card bg-bri2 p-3">
-                        <small>Saldo BRI 2</small>
-                        <h4 id="dash-bri2" class="mb-0">Rp 0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3 col-12">
-                    <div class="card stat-card bg-total p-3 shadow">
-                        <small>Grand Total</small>
-                        <h4 id="dash-total" class="mb-0">Rp 0</h4>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card p-3">
-                <ul class="nav nav-pills mb-3" id="pills-tab">
-                    <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-input"><i class="bi bi-pencil-square"></i> Input Saldo</button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-history"><i class="bi bi-clock-history"></i> Riwayat Laporan</button>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="pills-input">
-                        <form id="saldoForm" class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Tanggal</label>
-                                <input type="date" id="inp-tgl" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Jam</label>
-                                <input type="time" id="inp-jam" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-success fw-bold">Saldo Cash</label>
-                                <input type="number" id="inp-cash" class="form-control" placeholder="0" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-primary fw-bold">Saldo BRI 1</label>
-                                <input type="number" id="inp-bri1" class="form-control" placeholder="0" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label text-info fw-bold">Saldo BRI 2</label>
-                                <input type="number" id="inp-bri2" class="form-control" placeholder="0" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Keterangan / Catatan</label>
-                                <input type="text" id="inp-ket" class="form-control" placeholder="Contoh: Setoran harian atau mutasi">
-                            </div>
-                            <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">SIMPAN LAPORAN</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="tab-pane fade" id="pills-history">
-                        <div class="table-responsive table-container">
-                            <table class="table table-hover align-middle">
-                                <thead class="table-light sticky-top">
-                                    <tr>
-                                        <th>Waktu</th>
-                                        <th>Cash</th>
-                                        <th>BRI 1</th>
-                                        <th>BRI 2</th>
-                                        <th>Total</th>
-                                        <th>Selisih</th>
-                                        <th>Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabel-riwayat">
-                                    </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
 </div>
 
 <script>
-    // Inisialisasi Data dari LocalStorage
-    let dbSaldo = JSON.parse(localStorage.getItem('data_saldo')) || [];
+let data=[];
 
-    // Format Rupiah
-    const formatRp = (angka) => "Rp " + new Intl.NumberFormat('id-ID').format(angka);
+async function load(){
+ let snap = await window.firebaseFns.getDocs(window.firebaseFns.collection(window.db,"brilink"));
+ data=[];
+ snap.forEach(doc=> data.push({...doc.data(),id:doc.id}));
+ render();
+}
 
-    // Update Dashboard & Tabel
-    function updateTampilan() {
-        const tabel = document.getElementById('tabel-riwayat');
-        tabel.innerHTML = '';
-        
-        let totalCash = 0, totalBRI1 = 0, totalBRI2 = 0, grandTotal = 0;
+async function simpan(){
+ let d={
+  tgl:document.getElementById('tgl').value,
+  tunai:+i_tunai.value||0,
+  bri1:+i_bri1.value||0,
+  bri2:+i_bri2.value||0,
+  elang:+i_elang.value||0,
+  dana:+i_dana.value||0,
+  liga:+i_liga.value||0
+ };
+ d.total = d.tunai+d.bri1+d.bri2+d.elang+d.dana+d.liga;
 
-        dbSaldo.forEach((item, index) => {
-            const rowTotal = item.cash + item.bri1 + item.bri2;
-            
-            // Hitung Selisih
-            let selisihHtml = '-';
-            if
+ await window.firebaseFns.addDoc(window.firebaseFns.collection(window.db,"brilink"),d);
+ load();
+}
+
+async function hapus(id){
+ await window.firebaseFns.deleteDoc(window.firebaseFns.doc(window.db,"brilink",id));
+ load();
+}
+
+function render(){
+ let total=0;
+ let list=document.getElementById('list');
+ list.innerHTML="";
+
+ let labels=[], values=[];
+
+ data.forEach(d=>{
+  total+=d.total;
+  labels.push(d.tgl);
+  values.push(d.total);
+
+  list.innerHTML+=`<div class='card'>${d.tgl} - Rp ${d.total} <button onclick="hapus('${d.id}')">Hapus</button></div>`;
+ });
+
+ document.getElementById('grandTotal').innerText='Rp '+total;
+
+ if(data.length>0){
+  let last=data[data.length-1];
+  tunai.innerText=last.tunai;
+  bri1.innerText=last.bri1;
+  bri2.innerText=last.bri2;
+  elang.innerText=last.elang;
+  dana.innerText=last.dana;
+  liga.innerText=last.liga;
+ }
+
+ new Chart(document.getElementById('chart'),{
+  type:'line',
+  data:{labels:labels,datasets:[{label:'Saldo',data:values}]}
+ });
+}
+
+load();
+</script>
+
+</body>
+</html>
