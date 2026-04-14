@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pembukuan Simpel</title>
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .date-display {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .total-card {
+            background-color: var(--text-main);
+            color: white;
+            border: none;
+        }
+
+        .total-card .card-title, .total-card .card-amount {
+            color: white;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input, select {
+            padding: 0.625rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--secondary);
+            cursor: not-allowed;
+        }
+
+        /* Table Section */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px; /* Force scroll on small screens */
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: right;
+            position: sticky;
+            top: 0;
+        }
+
+        th:first-child, td:first-child {
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .trend-up {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .trend-down {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .trend-neutral {
+            color: var(--secondary);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--text-main);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .loading-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <div>
+                <h1><i class="fa-solid fa-wallet"></i> Pembukuan Simpel</h1>
+                <div class="date-display" id="currentDate"></div>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; opacity: 0.8;">Firebase Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Dashboard Saldo -->
+        <section class="dashboard-grid">
+            <div class="card total-card">
+                <div class="card-title"><i class="fa-solid fa-coins"></i> Total Saldo Keseluruhan</div>
+                <div class="card-amount" id="totalGrand">Rp 0</div>
+            </div>
+            <!-- Kartu Saldo Individual -->
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Saldo Tunai</div>
+                <div class="card-amount" id="bal-tunai">Rp 0</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-building-columns"></i> Saldo BRI 1</div>
+                <div class="card-amount" id="bal-bri1">Rp 0</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-building-columns"></i> Saldo BRI 2</div>
+                <div class="card-amount" id="bal-bri2">Rp 0</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-mobile-screen"></i> Saldo Dana</div>
+                <div class="card-amount" id="bal-dana">Rp 0</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-dove"></i> Saldo Elang Reload</div>
+                <div class="card-amount" id="bal-elang">Rp 0</div>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-star"></i> Saldo Ligastar</div>
+                <div class="card-amount" id="bal-ligastar">Rp 0</div>
+            </div>
+        </section>
+
+        <!-- Form Input Data -->
+        <section class="form-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fa-solid fa-pen-to-square"></i> Input Data Transaksi</h2>
+            </div>
+            <form id="transactionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="date">Tanggal</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="account">Akun / Dompet</label>
+                        <select id="account" required>
+                            <option value="tunai">Tunai</option>
+                            <option value="bri1">BRI 1</option>
+                            <option value="bri2">BRI 2</option>
+                            <option value="dana">Dana</option>
+                            <option value="elang">Elang Reload</option>
+                            <option value="ligastar">Ligastar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Jenis Transaksi</label>
+                        <select id="type" required>
+                            <option value="masuk">Pemasukan (+)</option>
+                            <option value="keluar">Pengeluaran (-)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Jumlah (Rp)</label>
+                        <input type="number" id="amount" placeholder="0" min="1" required>
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="desc">Keterangan (Opsional)</label>
+                        <input type="text" id="desc" placeholder="Contoh: Isi pulsa, Bayar listrik, dll">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fa-solid fa-save"></i> Simpan Transaksi
+                </button>
+            </form>
+        </section>
+
+        <!-- Laporan Harian -->
+        <section class="table-container">
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border);">
+                <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Laporan Harian & Selisih</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Tunai</th>
+                        <th>BRI 1</th>
+                        <th>BRI 2</th>
+                        <th>Dana</th>
+                        <th>Elang</th>
+                        <th>Ligastar</th>
+                        <th>Total Akhir</th>
+                        <th>Selisih (Hari Ini - Kemarin)</th>
+                    </tr>
+                </thead>
+                <tbody id="reportBody">
+                    <!-- Data akan diisi oleh JavaScript -->
+                    <tr>
+                        <td colspan="9" style="text-align: center;">Memuat data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- Komponen Toast -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-info-circle"></i>
+        <span id="toastMsg">Pesan notifikasi</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Firebase Logic & App Logic -->
+    <script type="module">
+        // Import Firebase Functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        // --- KONFIGURASI FIREBASE (DARI USER) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC1BV1OiCkOxTI8PjNArwtiKaNWgIQwt-A",
+            authDomain: "databaseku-ec936.firebaseapp.com",
+            projectId: "databaseku-ec936",
+            storageBucket: "databaseku-ec936.firebasestorage.app",
+            messagingSenderId: "400412628590",
+            appId: "1:400412628590:web:b70df2684e1d7b7344b87f",
+            measurementId: "G-9D5MM3P4WR"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+        // -----------------------------------------
+
+        // State Aplikasi
+        const accounts = ['tunai', 'bri1', 'bri2', 'dana', 'elang', 'ligastar'];
+        let allTransactions = [];
+
+        // Helper: Format Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(number);
+        };
+
+        // Helper: Tampilkan Tanggal Hari Ini di Header
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Set Default Date di Form ke Hari Ini
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Helper: Toast Notification
+        const showToast = (message, type = 'success') => {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            msgEl.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        };
+
+        // Helper: Loading Toggle
+        const toggleLoading = (show) => {
+            const el = document.getElementById('loading');
+            if(show) el.classList.add('active');
+            else el.classList.remove('active');
+        };
+
+        // --- CORE LOGIC: HITUNG SALDO & LAPORAN ---
+
+        const processData = (transactions) => {
+            // 1. Urutkan transaksi berdasarkan Tanggal (lalu Timestamp) secara ASC (Tua -> Baru)
+            // Ini penting untuk menghitung kumulatif saldo harian dengan benar
+            transactions.sort((a, b) => {
+                const dateA = a.date;
+                const dateB = b.date;
+                if (dateA !== dateB) return dateA.localeCompare(dateB);
+                return a.timestamp - b.timestamp; // Jika tanggal sama, urutkan waktu input
+            });
+
+            // 2. Reset Saldo Awal
+            let runningBalances = {
+                tunai: 0, bri1: 0, bri2: 0, dana: 0, elang: 0, ligastar: 0
+            };
+
+            // 3. Variabel untuk menyimpan snapshot harian
+            // Struktur: { "2023-10-25": { ...balances, total: 100 }, ... }
+            let dailySnapshots = {};
+
+            // 4. Loop Transaksi untuk bangun history saldo
+            transactions.forEach(trx => {
+                // Update running balance
+                const val = parseFloat(trx.amount);
+                if (trx.type === 'masuk') {
+                    runningBalances[trx.account] += val;
+                } else {
+                    runningBalances[trx.account] -= val;
+                }
+
+                // Simpan snapshot saldo pada tanggal transaksi tersebut (Overwrite jika ada banyak transaksi di hari yang sama,
+                // sehingga yang tersisa adalah saldo AKHIR hari tersebut)
+                const totalDaily = Object.values(runningBalances).reduce((a, b) => a + b, 0);
+                
+                dailySnapshots[trx.date] = {
+                    ...runningBalances,
+                    total: totalDaily
+                };
+            });
+
+            // 5. Update Dashboard (Ambil saldo terakhir dari proses running)
+            updateDashboard(runningBalances);
+
+            // 6. Generate Laporan Table
+            renderReportTable(dailySnapshots);
+        };
+
+        const updateDashboard = (balances) => {
+            let grandTotal = 0;
+            
+            // Mapping ID ke DOM ID
+            const map = {
+                tunai: 'bal-tunai',
+                bri1: 'bal-bri1',
+                bri2: 'bal-bri2',
+                dana: 'bal-dana',
+                elang: 'bal-elang',
+                ligastar: 'bal-ligastar'
+            };
+
+            for (const [key, value] of Object.entries(balances)) {
+                if(map[key]) {
+                    const el = document.getElementById(map[key]);
+                    if(el) el.textContent = formatRupiah(value);
+                    grandTotal += value;
+                }
+            }
+
+            document.getElementById('totalGrand').textContent = formatRupiah(grandTotal);
+        };
+
+        const renderReportTable = (snapshots) => {
+            const tbody = document.getElementById('reportBody');
+            tbody.innerHTML = '';
+
+            // Ambil tanggal-tanggal yang ada, urutkan DESCENDING (Baru -> Tua) untuk tampilan tabel
+            const dates = Object.keys(snapshots).sort().reverse();
+
+            if (dates.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 2rem;">Belum ada data transaksi.</td></tr>';
+                return;
+            }
+
+            let previousTotal = 0;
+
+            dates.forEach((date, index) => {
+                const data = snapshots[date];
+                
+                // Hitung Selisih
+                // Jika ini baris pertama (terbaru), selisihnya dibandingkan dengan total hari sebelumnya (jika ada).
+                // Karena kita loop descending, 'index' 0 adalah data terbaru. 
+                // Tapi logika selisih adalah (Total Hari Ini - Total Hari Kemarin).
+                // Dalam loop descending: Kemarin adalah data di index+1.
+                
+                // Mari kita ubah logika sedikit: Selisih adalah perubahan yang terjadi PADA hari tersebut 
+                // dibandingkan penutupan hari sebelumnya.
+                
+                // Karena kita menurun (DESC), hari "kemarin" secara logika tanggal adalah data selanjutnya di array (index + 1)
+                // kecuali jika hari ini tidak berurutan (misal lompat tanggal), kita asumsikan selisih dari snapshot terakhir tersedia.
+                
+                let prevDateTotal = 0;
+                if (index + 1 < dates.length) {
+                    const prevDateStr = dates[index + 1];
+                    prevDateTotal = snapshots[prevDateStr].total;
+                } else {
+                    // Ini data paling tua (terendah), kita asumsikan sebelumnya 0
+                    prevDateTotal = 0; 
+                }
+
+                const diff = data.total - prevDateTotal;
+                
+                // Format Selisih
+                let diffClass = 'trend-neutral';
+                let diffSign = '';
+                if (diff > 0) { diffClass = 'trend-up'; diffSign = '+'; }
+                if (diff < 0) { diffClass = 'trend-down'; }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${date}</td>
+                    <td>${formatRupiah(data.tunai)}</td>
+                    <td>${formatRupiah(data.bri1)}</td>
+                    <td>${formatRupiah(data.bri2)}</td>
+                    <td>${formatRupiah(data.dana)}</td>
+                    <td>${formatRupiah(data.elang)}</td>
+                    <td>${formatRupiah(data.ligastar)}</td>
+                    <td style="font-weight:bold;">${formatRupiah(data.total)}</td>
+                    <td class="${diffClass}">${diffSign}${formatRupiah(diff)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        };
+
+        // --- FIREBASE LISTENER ---
+
+        // Setup Query: Urutkan berdasar timestamp agar realtime update enak dilihat (logika urutan ulang di processData)
+        const q = query(collection(db, "transactions"), orderBy("timestamp", "desc"));
+
+        toggleLoading(true);
+        onSnapshot(q, (snapshot) => {
+            toggleLoading(false);
+            const transactions = [];
+            snapshot.forEach((doc) => {
+                transactions.push({ id: doc.id, ...doc.data() });
+            });
+            allTransactions = transactions;
+            processData(transactions);
+        }, (error) => {
+            toggleLoading(false);
+            console.error("Error fetching data: ", error);
+            showToast("Gagal memuat data. Cek koneksi & Firebase Console.", "error");
+        });
+
+        // --- FORM HANDLER ---
+
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+            const date = document.getElementById('date').value;
+            const account = document.getElementById('account').value;
+            const type = document.getElementById('type').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const desc = document.getElementById('desc').value;
+
+            try {
+                await addDoc(collection(db, "transactions"), {
+                    date: date,
+                    account: account,
+                    type: type,
+                    amount: amount,
+                    description: desc,
+                    timestamp: Date.now() // Server timestamp alternatif
+                });
+                
+                showToast("Data berhasil disimpan!", "success");
+                // Reset form kecuali tanggal (biar mudah input beruntun)
+                document.getElementById('amount').value = '';
+                document.getElementById('desc').value = '';
+                document.getElementById('amount').focus();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                showToast("Terjadi kesalahan saat menyimpan.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Simpan Transaksi';
+            }
+        });
+
+    </script>
+</body>
+</html>
