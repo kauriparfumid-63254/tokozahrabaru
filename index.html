@@ -1,86 +1,1171 @@
 <!DOCTYPE html>
-<input type="number" id="i_bri1" placeholder="BRI1">
-<input type="number" id="i_bri2" placeholder="BRI2">
-<input type="number" id="i_elang" placeholder="Elang">
-<input type="number" id="i_dana" placeholder="DANA">
-<input type="number" id="i_liga" placeholder="Liga">
-<button onclick="simpan()">Simpan Online</button>
-</div>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arisan Gula 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
+        :root{
+            --bg:#FDF6EE;--card:#FFFFFF;--fg:#2C1810;--fg2:#7A5C3F;
+            --muted:#BFA68A;--accent:#D4880F;--accent-light:#FEF3C7;
+            --accent-dark:#A66C00;--border:#E8D5B7;--success:#16A34A;
+            --success-light:#DCFCE7;--danger:#DC2626;--danger-light:#FEE2E2;
+        }
+        body{background:var(--bg);color:var(--fg);min-height:100vh;margin:0;
+            background:linear-gradient(135deg,#FDF6EE 0%,#FEF3C7 40%,#FDF6EE 100%);
+            background-size:200% 200%;animation:gs 20s ease infinite}
+        @keyframes gs{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        
+        .page{display:none}.page.active{display:block}
+        .tab-btn{transition:all .2s}
+        .tab-btn.active{color:var(--accent);border-bottom:3px solid var(--accent);font-weight:700}
+        .tab-btn:hover{color:var(--accent-dark)}
+        
+        .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;
+            padding:20px;transition:transform .2s,box-shadow .2s}
+        .stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(44,24,16,.08)}
+        
+        .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+        
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;
+            font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .15s}
+        .btn-primary{background:var(--accent);color:#fff}
+        .btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px)}
+        .btn-success{background:var(--success);color:#fff}
+        .btn-success:hover{background:#15803d}
+        .btn-danger{background:var(--danger);color:#fff}
+        .btn-danger:hover{background:#b91c1c}
+        .btn-outline{background:transparent;border:2px solid var(--border);color:var(--fg2)}
+        .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+        .btn-sm{padding:6px 14px;font-size:12px;border-radius:8px}
+        
+        .toggle{position:relative;width:48px;height:26px;cursor:pointer}
+        .toggle input{opacity:0;width:0;height:0}
+        .toggle .slider{position:absolute;inset:0;background:#D1D5DB;border-radius:26px;transition:.25s}
+        .toggle .slider:before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;
+            background:#fff;border-radius:50%;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+        .toggle input:checked+.slider{background:var(--success)}
+        .toggle input:checked+.slider:before{transform:translateX(22px)}
+        
+        .modal-overlay{position:fixed;inset:0;background:rgba(44,24,16,.5);z-index:100;
+            display:none;align-items:center;justify-content:center;padding:16px;
+            backdrop-filter:blur(4px);animation:fadeIn .2s}
+        .modal-overlay.show{display:flex}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .modal-box{background:var(--card);border-radius:20px;width:100%;max-width:480px;
+            max-height:90vh;overflow-y:auto;animation:slideUp .25s ease}
+        @keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+        
+        .toast-container{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:8px}
+        .toast{padding:12px 20px;border-radius:12px;color:#fff;font-weight:600;font-size:14px;
+            animation:toastIn .3s ease,toastOut .3s ease 2.7s;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+        .toast-success{background:var(--success)}.toast-danger{background:var(--danger)}.toast-info{background:var(--accent)}
+        @keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        @keyframes toastOut{from{opacity:1}to{opacity:0}}
+        
+        input[type="text"],input[type="number"],input[type="date"],select,textarea{
+            width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:10px;
+            font-size:14px;font-family:inherit;transition:border-color .2s;background:var(--bg);color:var(--fg)}
+        input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+        
+        .month-tab{padding:8px 16px;border-radius:10px;font-weight:600;font-size:13px;
+            cursor:pointer;transition:all .2s;white-space:nowrap;border:2px solid transparent}
+        .month-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(212,136,15,.3)}
+        .month-tab:not(.active){background:var(--card);color:var(--fg2);border-color:var(--border)}
+        .month-tab:not(.active):hover{border-color:var(--accent);color:var(--accent)}
+        
+        .member-row{display:flex;align-items:center;gap:12px;padding:12px 16px;
+            border-bottom:1px solid var(--border);transition:background .15s}
+        .member-row:hover{background:var(--accent-light)}
+        .member-row:last-child{border-bottom:none}
+        
+        .avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;
+            justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+        
+        .lot-badge{background:var(--accent-light);color:var(--accent-dark);padding:2px 10px;
+            border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+        
+        .sticky-bar{position:sticky;bottom:0;background:var(--card);border-top:2px solid var(--border);
+            padding:16px;z-index:10;border-radius:0 0 16px 16px}
+        
+        table{width:100%;border-collapse:collapse}
+        th{background:var(--accent-light);color:var(--accent-dark);padding:10px 12px;
+            font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+            text-align:left;position:sticky;top:0;z-index:2}
+        td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+        tr:hover td{background:rgba(254,243,199,.3)}
+        
+        .pinjaman-card{border:1px solid var(--border);border-radius:16px;padding:20px;
+            background:var(--card);transition:all .2s}
+        .pinjaman-card:hover{box-shadow:0 4px 16px rgba(44,24,16,.06)}
+        
+        .progress-bar{height:8px;background:#E5E7EB;border-radius:8px;overflow:hidden}
+        .progress-fill{height:100%;border-radius:8px;transition:width .5s ease}
+        
+        .kas-row{display:flex;align-items:center;gap:12px;padding:14px 16px;
+            border-bottom:1px solid var(--border)}
+        .kas-row:last-child{border-bottom:none}
+        
+        ::-webkit-scrollbar{width:6px;height:6px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--muted);border-radius:3px}
+        
+        @media(max-width:640px){
+            .stat-grid{grid-template-columns:repeat(2,1fr)!important}
+            .month-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+            .member-row{flex-wrap:wrap}
+            .hide-mobile{display:none}
+        }
+        @media print{.no-print{display:none!important}.page{display:block!important}}
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="no-print" style="background:linear-gradient(135deg,#1E0F08,#3D1F00);color:#D4B896;padding:0">
+        <div style="max-width:1200px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:42px;height:42px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                    <i class="fas fa-cubes-stacked" style="color:#fff;font-size:18px"></i>
+                </div>
+                <div>
+                    <h1 style="margin:0;font-size:18px;font-weight:800;color:#FFF;line-height:1.2">Arisan Gula</h1>
+                    <p style="margin:0;font-size:11px;color:#BFA68A;font-weight:500">Periode April 2026 - Januari 2027</p>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#D4B896;border:1px solid rgba(255,255,255,.15)" onclick="exportCSV()" title="Export CSV">
+                    <i class="fas fa-download"></i><span class="hide-mobile">Export</span>
+                </button>
+                <button class="btn btn-sm" style="background:rgba(220,38,38,.2);color:#FCA5A5;border:1px solid rgba(220,38,38,.3)" onclick="resetData()" title="Reset Data">
+                    <i class="fas fa-rotate-left"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-<div class="card">
-<h3>Riwayat</h3>
-<div id="list"></div>
-</div>
+    <!-- TAB NAVIGATION -->
+    <nav class="no-print" style="background:var(--card);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:50">
+        <div style="max-width:1200px;margin:0 auto;padding:0 20px;display:flex;gap:4px;overflow-x:auto">
+            <button class="tab-btn active" data-page="dashboard" style="padding:14px 18px;font-size:13px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;color:var(--fg2)">
+                <i class="fas fa-chart-pie" style="margin-right:6px"></i>Dashboard
+            </button>
+            <button class="tab-btn" data-page="anggota" style="padding:14px 18px;font-size:13px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;color:var(--fg2)">
+                <i class="fas fa-users" style="margin-right:6px"></i>Anggota
+            </button>
+            <button class="tab-btn" data-page="setoran" style="padding:14px 18px;font-size:13px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;color:var(--fg2)">
+                <i class="fas fa-money-bill-wave" style="margin-right:6px"></i>Setoran
+            </button>
+            <button class="tab-btn" data-page="pinjaman" style="padding:14px 18px;font-size:13px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;color:var(--fg2)">
+                <i class="fas fa-hand-holding-dollar" style="margin-right:6px"></i>Pinjaman
+            </button>
+            <button class="tab-btn" data-page="kas" style="padding:14px 18px;font-size:13px;font-weight:600;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;color:var(--fg2)">
+                <i class="fas fa-wallet" style="margin-right:6px"></i>Kas
+            </button>
+        </div>
+    </nav>
 
-</div>
+    <!-- MAIN CONTENT -->
+    <main style="max-width:1200px;margin:0 auto;padding:20px">
+        <div id="page-dashboard" class="page active"></div>
+        <div id="page-anggota" class="page"></div>
+        <div id="page-setoran" class="page"></div>
+        <div id="page-pinjaman" class="page"></div>
+        <div id="page-kas" class="page"></div>
+    </main>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal-box" id="modal-box"></div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast-container" id="toast-container"></div>
 
 <script>
-let data=[];
+// === KONSTANTA ===
+const HARGA_PER_LOT = 20000;
+const BULAN = ['APRIL','MEI','JUNI','JULI','AGUSTUS','SEPTEMBER','OKTOBER','NOPEMBER','DESEMBER','JANUARI'];
+const BULAN_LABEL = {'APRIL':'April','MEI':'Mei','JUNI':'Juni','JULI':'Juli','AGUSTUS':'Agustus','SEPTEMBER':'September','OKTOBER':'Oktober','NOPEMBER':'November','DESEMBER':'Desember','JANUARI':'Januari'};
+const AVATAR_COLORS = ['#D4880F','#16A34A','#DC2626','#7C3AED','#0891B2','#C026D3','#EA580C','#4F46E5','#059669','#DB2777','#CA8A04','#2563EB','#9333EA','#0D9488','#E11D48','#65A30D'];
 
-async function load(){
- let snap = await window.firebaseFns.getDocs(window.firebaseFns.collection(window.db,"brilink"));
- data=[];
- snap.forEach(doc=> data.push({...doc.data(),id:doc.id}));
- render();
+// === DATA AWAL ===
+function getDefaultData() {
+    const anggota = [
+        {id:1,nama:'ERMA',lot:5},{id:2,nama:'LINDA',lot:5},{id:3,nama:'BU RW',lot:8},
+        {id:4,nama:'TUN SETO',lot:4},{id:5,nama:'KARTINI',lot:2},{id:6,nama:'ZAHRA',lot:10},
+        {id:7,nama:'MODOT',lot:7},{id:8,nama:'WARSINI',lot:2},{id:9,nama:'LINA',lot:3},
+        {id:10,nama:'AMBAR',lot:2},{id:11,nama:'YANI',lot:3},{id:12,nama:'MUSKARDI',lot:2},
+        {id:13,nama:'DUA',lot:2},{id:14,nama:'PB',lot:1},{id:15,nama:'BU WAINEM',lot:1},
+        {id:16,nama:'RIRIS',lot:2},{id:17,nama:'BU GINUK',lot:5},{id:18,nama:'BU NURUL',lot:2},
+        {id:19,nama:'DELISA',lot:2},{id:20,nama:'HANAN Barang',lot:3},{id:21,nama:'HANAN Uang',lot:2},
+        {id:22,nama:'NASIB',lot:1},{id:23,nama:'SUKIYEM',lot:2},{id:24,nama:'DWI ATAR',lot:2},
+        {id:25,nama:'IDA PUJI',lot:3},{id:26,nama:'PUJI',lot:5},{id:27,nama:'SUYATI',lot:2},
+        {id:28,nama:'BU ATIN',lot:2},{id:29,nama:'INTAN',lot:5},{id:30,nama:'JEPPY',lot:10}
+    ];
+    const setoran = {
+        'APRIL':{1:5,2:5,3:8,4:4,5:2,6:10,7:7,8:2,9:3,10:2,11:3,12:2,13:2,14:1,15:1,16:2,17:5,18:2,19:2,20:3,21:2,22:1,23:2,24:2,25:3,26:5,27:2,28:2,29:5,30:10},
+        'MEI':{5:2,6:10,7:7,12:2,16:2,23:2},
+        'JUNI':{5:2,6:10,7:7,12:2,16:2},
+        'JULI':{7:7,12:2,16:2,23:2},
+        'AGUSTUS':{12:2,16:2},
+        'SEPTEMBER':{16:2},'OKTOBER':{16:2},'NOPEMBER':{16:2},'DESEMBER':{16:2},'JANUARI':{16:2}
+    };
+    const pinjaman = [
+        {id:1,anggotaId:13,pokok:1500000,bunga:75000},
+        {id:2,anggotaId:8,pokok:1500000,bunga:75000}
+    ];
+    const angsuran = {1:{},2:{}};
+    const kas = [
+        {id:1,tanggal:'2026-04-01',masuk:3600000,keluar:0,keterangan:'Saldo awal + Setoran April'},
+        {id:2,tanggal:'2026-04-02',masuk:0,keluar:1500000,keterangan:'Pinjaman DUA'},
+        {id:3,tanggal:'2026-04-03',masuk:0,keluar:1500000,keterangan:'Pinjaman WARSINI'}
+    ];
+    return {anggota,setoran,pinjaman,angsuran,kas,nextId:31,nextPinjamanId:3,nextKasId:4};
 }
 
-async function simpan(){
- let d={
-  tgl:document.getElementById('tgl').value,
-  tunai:+i_tunai.value||0,
-  bri1:+i_bri1.value||0,
-  bri2:+i_bri2.value||0,
-  elang:+i_elang.value||0,
-  dana:+i_dana.value||0,
-  liga:+i_liga.value||0
- };
- d.total = d.tunai+d.bri1+d.bri2+d.elang+d.dana+d.liga;
+// === STATE ===
+let data = {};
+let currentPage = 'dashboard';
+let currentMonth = 'APRIL';
+let setoranDraft = {}; // draft setoran sebelum disimpan
 
- await window.firebaseFns.addDoc(window.firebaseFns.collection(window.db,"brilink"),d);
- load();
+function loadData() {
+    try {
+        const saved = localStorage.getItem('arisanGula2026');
+        if (saved) { data = JSON.parse(saved); return; }
+    } catch(e) {}
+    data = getDefaultData();
 }
 
-async function hapus(id){
- await window.firebaseFns.deleteDoc(window.firebaseFns.doc(window.db,"brilink",id));
- load();
+function saveData() {
+    localStorage.setItem('arisanGula2026', JSON.stringify(data));
 }
 
-function render(){
- let total=0;
- let list=document.getElementById('list');
- list.innerHTML="";
-
- let labels=[], values=[];
-
- data.forEach(d=>{
-  total+=d.total;
-  labels.push(d.tgl);
-  values.push(d.total);
-
-  list.innerHTML+=`<div class='card'>${d.tgl} - Rp ${d.total} <button onclick="hapus('${d.id}')">Hapus</button></div>`;
- });
-
- document.getElementById('grandTotal').innerText='Rp '+total;
-
- if(data.length>0){
-  let last=data[data.length-1];
-  tunai.innerText=last.tunai;
-  bri1.innerText=last.bri1;
-  bri2.innerText=last.bri2;
-  elang.innerText=last.elang;
-  dana.innerText=last.dana;
-  liga.innerText=last.liga;
- }
-
- new Chart(document.getElementById('chart'),{
-  type:'line',
-  data:{labels:labels,datasets:[{label:'Saldo',data:values}]}
- });
+// === UTILITAS ===
+function fmt(n) {
+    if (n === 0) return 'Rp 0';
+    const abs = Math.abs(n);
+    const formatted = abs.toLocaleString('id-ID');
+    return (n < 0 ? '-Rp ' : 'Rp ') + formatted;
 }
 
-load();
+function getInitials(nama) {
+    return nama.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+}
+
+function getAvatarColor(id) {
+    return AVATAR_COLORS[id % AVATAR_COLORS.length];
+}
+
+function getAnggotaById(id) {
+    return data.anggota.find(a => a.id === id);
+}
+
+function totalSetoranBulan(bulan) {
+    const s = data.setoran[bulan] || {};
+    return Object.values(s).reduce((t, lot) => t + lot * HARGA_PER_LOT, 0);
+}
+
+function totalSetoranKeseluruhan() {
+    return BULAN.reduce((t, b) => t + totalSetoranBulan(b), 0);
+}
+
+function totalSetoranAnggota(aid) {
+    let t = 0;
+    for (const b of BULAN) {
+        const s = data.setoran[b] || {};
+        if (s[aid]) t += s[aid] * HARGA_PER_LOT;
+    }
+    return t;
+}
+
+function bulanSudahBayar(aid) {
+    let c = 0;
+    for (const b of BULAN) {
+        const s = data.setoran[b] || {};
+        if (s[aid]) c++;
+    }
+    return c;
+}
+
+function totalLot() {
+    return data.anggota.reduce((t, a) => t + a.lot, 0);
+}
+
+function saldoKas() {
+    return data.kas.reduce((t, k) => t + k.masuk - k.keluar, 0);
+}
+
+function totalMasuk() { return data.kas.reduce((t, k) => t + k.masuk, 0); }
+function totalKeluar() { return data.kas.reduce((t, k) => t + k.keluar, 0); }
+
+function totalPinjamanAktif() {
+    return data.pinjaman.reduce((t, p) => t + p.pokok + p.bunga, 0);
+}
+
+function totalAngsuranDibayar(pid) {
+    const a = data.angsuran[pid] || {};
+    return Object.values(a).reduce((t, v) => t + v, 0);
+}
+
+// === TOAST ===
+function showToast(msg, type='success') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast toast-' + type;
+    t.innerHTML = '<i class="fas fa-' + (type==='success'?'check-circle':type==='danger'?'exclamation-circle':'info-circle') + '" style="margin-right:8px"></i>' + msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+
+// === MODAL ===
+function openModal(title, bodyHTML, footerHTML) {
+    const box = document.getElementById('modal-box');
+    box.innerHTML = `
+        <div style="padding:24px 24px 0;display:flex;justify-content:space-between;align-items:center">
+            <h3 style="margin:0;font-size:18px;font-weight:800;color:var(--fg)">${title}</h3>
+            <button onclick="closeModal()" style="background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div style="padding:20px 24px">${bodyHTML}</div>
+        ${footerHTML ? '<div style="padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end">'+footerHTML+'</div>' : ''}
+    `;
+    document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// === NAVIGASI TAB ===
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        currentPage = btn.dataset.page;
+        document.getElementById('page-' + currentPage).classList.add('active');
+        renderPage(currentPage);
+    });
+});
+
+function renderPage(page) {
+    switch(page) {
+        case 'dashboard': renderDashboard(); break;
+        case 'anggota': renderAnggota(); break;
+        case 'setoran': renderSetoran(); break;
+        case 'pinjaman': renderPinjaman(); break;
+        case 'kas': renderKas(); break;
+    }
+}
+
+// === RENDER: DASHBOARD ===
+function renderDashboard() {
+    const el = document.getElementById('page-dashboard');
+    const totalSetoran = totalSetoranKeseluruhan();
+    const saldo = saldoKas();
+    el.innerHTML = `
+        <div class="stat-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+            <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;background:var(--accent-light);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-users" style="color:var(--accent);font-size:16px"></i>
+                    </div>
+                    <span style="font-size:12px;color:var(--fg2);font-weight:600">TOTAL ANGGOTA</span>
+                </div>
+                <div style="font-size:32px;font-weight:900;color:var(--fg)">${data.anggota.length}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">${totalLot()} lot terdaftar</div>
+            </div>
+            <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;background:var(--success-light);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-money-bill-wave" style="color:var(--success);font-size:16px"></i>
+                    </div>
+                    <span style="font-size:12px;color:var(--fg2);font-weight:600">TOTAL SETORAN</span>
+                </div>
+                <div style="font-size:24px;font-weight:900;color:var(--fg)">${fmt(totalSetoran)}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">${BULAN.length} bulan periode</div>
+            </div>
+            <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;background:var(--danger-light);border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-hand-holding-dollar" style="color:var(--danger);font-size:16px"></i>
+                    </div>
+                    <span style="font-size:12px;color:var(--fg2);font-weight:600">PINJAMAN AKTIF</span>
+                </div>
+                <div style="font-size:24px;font-weight:900;color:var(--fg)">${fmt(totalPinjamanAktif())}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">${data.pinjaman.length} peminjam</div>
+            </div>
+            <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+                    <div style="width:40px;height:40px;background:#E0E7FF;border-radius:12px;display:flex;align-items:center;justify-content:center">
+                        <i class="fas fa-wallet" style="color:#4F46E5;font-size:16px"></i>
+                    </div>
+                    <span style="font-size:12px;color:var(--fg2);font-weight:600">SALDO KAS</span>
+                </div>
+                <div style="font-size:24px;font-weight:900;color:${saldo>=0?'var(--success)':'var(--danger)'}">${fmt(saldo)}</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:4px">Per ${new Date().toLocaleDateString('id-ID')}</div>
+            </div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:24px">
+            <div class="card" style="padding:20px">
+                <h3 style="margin:0 0 16px;font-size:15px;font-weight:700;color:var(--fg)">
+                    <i class="fas fa-chart-bar" style="color:var(--accent);margin-right:8px"></i>Setoran per Bulan
+                </h3>
+                <canvas id="chart-setoran" style="width:100%;height:220px"></canvas>
+            </div>
+            <div class="card" style="padding:20px">
+                <h3 style="margin:0 0 16px;font-size:15px;font-weight:700;color:var(--fg)">
+                    <i class="fas fa-bolt" style="color:var(--accent);margin-right:8px"></i>Aksi Cepat
+                </h3>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <button class="btn btn-primary" style="justify-content:flex-start;width:100%" onclick="document.querySelector('[data-page=anggota]').click();setTimeout(()=>openModalAnggota(),100)">
+                        <i class="fas fa-user-plus"></i>Tambah Anggota
+                    </button>
+                    <button class="btn btn-success" style="justify-content:flex-start;width:100%" onclick="document.querySelector('[data-page=setoran]').click()">
+                        <i class="fas fa-credit-card"></i>Input Setoran
+                    </button>
+                    <button class="btn btn-outline" style="justify-content:flex-start;width:100%" onclick="document.querySelector('[data-page=pinjaman]').click();setTimeout(()=>openModalPinjaman(),100)">
+                        <i class="fas fa-plus"></i>Tambah Pinjaman
+                    </button>
+                    <button class="btn btn-outline" style="justify-content:flex-start;width:100%" onclick="document.querySelector('[data-page=kas]').click();setTimeout(()=>openModalKas(),100)">
+                        <i class="fas fa-receipt"></i>Catat Transaksi
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="padding:20px">
+            <h3 style="margin:0 0 16px;font-size:15px;font-weight:700;color:var(--fg)">
+                <i class="fas fa-ranking-star" style="color:var(--accent);margin-right:8px"></i>Kelancaran Setoran Anggota
+            </h3>
+            <div style="overflow-x:auto">
+                <table>
+                    <thead><tr><th>No</th><th>Nama</th><th>Lot</th><th>Progress</th><th>Total Setoran</th></tr></thead>
+                    <tbody>
+                        ${data.anggota.sort((a,b)=>bulanSudahBayar(b.id)-bulanSudahBayar(a.id)).map((a,i)=>{
+                            const bl = bulanSudahBayar(a.id);
+                            const pct = Math.round(bl/BULAN.length*100);
+                            return `<tr>
+                                <td>${i+1}</td>
+                                <td style="font-weight:600;display:flex;align-items:center;gap:8px">
+                                    <div class="avatar" style="width:28px;height:28px;font-size:10px;border-radius:8px;background:${getAvatarColor(a.id)}">${getInitials(a.nama)}</div>
+                                    ${a.nama}
+                                </td>
+                                <td><span class="lot-badge">${a.lot}</span></td>
+                                <td style="min-width:160px">
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${pct}%;background:${pct>=80?'var(--success)':pct>=50?'var(--accent)':'var(--danger)'}"></div></div>
+                                        <span style="font-size:11px;font-weight:700;color:var(--fg2);min-width:36px">${bl}/${BULAN.length}</span>
+                                    </div>
+                                </td>
+                                <td style="font-weight:700;color:var(--accent-dark)">${fmt(totalSetoranAnggota(a.id))}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    // Gambar chart
+    setTimeout(() => drawChart(), 50);
+}
+
+function drawChart() {
+    const canvas = document.getElementById('chart-setoran');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = canvas.offsetHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    const values = BULAN.map(b => totalSetoranBulan(b));
+    const maxVal = Math.max(...values, 1);
+    const padding = {top:10, right:10, bottom:40, left:10};
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+    const barW = Math.min(40, (chartW / BULAN.length) * 0.6);
+    const gap = chartW / BULAN.length;
+
+    BULAN.forEach((b, i) => {
+        const x = padding.left + gap * i + (gap - barW) / 2;
+        const barH = (values[i] / maxVal) * chartH;
+        const y = padding.top + chartH - barH;
+
+        // Gradien bar
+        const grad = ctx.createLinearGradient(x, y, x, padding.top + chartH);
+        grad.addColorStop(0, '#D4880F');
+        grad.addColorStop(1, '#FEF3C7');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+        ctx.fill();
+
+        // Label bulan
+        ctx.fillStyle = '#7A5C3F';
+        ctx.font = '600 10px Plus Jakarta Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText(BULAN_LABEL[b].substring(0, 3), x + barW / 2, h - 8);
+
+        // Nilai di atas bar
+        if (values[i] > 0) {
+            ctx.fillStyle = '#2C1810';
+            ctx.font = '700 9px Plus Jakarta Sans';
+            const label = values[i] >= 1000000 ? (values[i]/1000000).toFixed(1)+'jt' : values[i] >= 1000 ? (values[i]/1000).toFixed(0)+'rb' : '0';
+            ctx.fillText(label, x + barW / 2, y - 4);
+        }
+    });
+}
+
+// === RENDER: ANGGOTA ===
+function renderAnggota() {
+    const el = document.getElementById('page-anggota');
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <div>
+                <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--fg)">Data Anggota</h2>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--fg2)">${data.anggota.length} anggota terdaftar dengan ${totalLot()} lot</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModalAnggota()"><i class="fas fa-user-plus"></i>Tambah Anggota</button>
+        </div>
+        <div class="card">
+            <div style="overflow-x:auto">
+                <table>
+                    <thead><tr><th>No</th><th>Nama</th><th>Lot</th><th>Setoran/bulan</th><th>Progress</th><th>Total Setoran</th><th style="text-align:center">Aksi</th></tr></thead>
+                    <tbody>
+                        ${data.anggota.map((a, i) => {
+                            const bl = bulanSudahBayar(a.id);
+                            const pct = Math.round(bl / BULAN.length * 100);
+                            return `<tr>
+                                <td style="font-weight:600">${i+1}</td>
+                                <td><div style="display:flex;align-items:center;gap:10px">
+                                    <div class="avatar" style="background:${getAvatarColor(a.id)}">${getInitials(a.nama)}</div>
+                                    <span style="font-weight:700">${a.nama}</span>
+                                </div></td>
+                                <td><span class="lot-badge">${a.lot} lot</span></td>
+                                <td>${fmt(a.lot * HARGA_PER_LOT)}</td>
+                                <td style="min-width:140px">
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${pct}%;background:${pct>=80?'var(--success)':pct>=50?'var(--accent)':'var(--danger)'}"></div></div>
+                                        <span style="font-size:11px;font-weight:700;color:var(--fg2)">${bl}/${BULAN.length}</span>
+                                    </div>
+                                </td>
+                                <td style="font-weight:800;color:var(--accent-dark)">${fmt(totalSetoranAnggota(a.id))}</td>
+                                <td style="text-align:center">
+                                    <button class="btn btn-sm btn-outline" onclick="openModalAnggota(${a.id})" style="margin:2px"><i class="fas fa-pen"></i></button>
+                                    <button class="btn btn-sm btn-danger" onclick="hapusAnggota(${a.id})" style="margin:2px"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+function openModalAnggota(editId) {
+    const a = editId ? getAnggotaById(editId) : null;
+    const title = a ? 'Edit Anggota' : 'Tambah Anggota Baru';
+    const body = `
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Nama Anggota</label>
+            <input type="text" id="inp-nama" value="${a ? a.nama : ''}" placeholder="Masukkan nama lengkap">
+        </div>
+        <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Jumlah Lot</label>
+            <input type="number" id="inp-lot" value="${a ? a.lot : ''}" min="1" max="100" placeholder="Contoh: 5">
+            <p style="font-size:11px;color:var(--muted);margin:6px 0 0">1 lot = ${fmt(HARGA_PER_LOT)} per bulan</p>
+        </div>
+    `;
+    const footer = `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="simpanAnggota(${editId || 'null'})">${a ? 'Simpan Perubahan' : 'Tambah Anggota'}</button>
+    `;
+    openModal(title, body, footer);
+    setTimeout(() => document.getElementById('inp-nama').focus(), 100);
+}
+
+function simpanAnggota(editId) {
+    const nama = document.getElementById('inp-nama').value.trim();
+    const lot = parseInt(document.getElementById('inp-lot').value);
+    if (!nama) { showToast('Nama tidak boleh kosong', 'danger'); return; }
+    if (!lot || lot < 1) { showToast('Jumlah lot harus minimal 1', 'danger'); return; }
+    if (editId) {
+        const a = getAnggotaById(editId);
+        a.nama = nama;
+        a.lot = lot;
+        showToast('Data anggota diperbarui');
+    } else {
+        data.anggota.push({ id: data.nextId++, nama, lot });
+        showToast('Anggota baru ditambahkan');
+    }
+    saveData();
+    closeModal();
+    renderAnggota();
+}
+
+function hapusAnggota(id) {
+    const a = getAnggotaById(id);
+    openModal('Hapus Anggota', `
+        <p style="margin:0;font-size:14px;color:var(--fg2)">Yakin ingin menghapus <strong>${a.nama}</strong>? Semua data setoran anggota ini juga akan dihapus.</p>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-danger" onclick="konfirmasiHapusAnggota(${id})">Hapus</button>
+    `);
+}
+
+function konfirmasiHapusAnggota(id) {
+    data.anggota = data.anggota.filter(a => a.id !== id);
+    // Hapus setoran terkait
+    for (const b of BULAN) {
+        if (data.setoran[b]) delete data.setoran[b][id];
+    }
+    saveData();
+    closeModal();
+    showToast('Anggota dihapus', 'danger');
+    renderAnggota();
+}
+
+// === RENDER: SETORAN ===
+function renderSetoran() {
+    const el = document.getElementById('page-setoran');
+    // Inisialisasi draft dari data tersimpan
+    setoranDraft = {};
+    for (const b of BULAN) {
+        setoranDraft[b] = { ...(data.setoran[b] || {}) };
+    }
+
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+            <div>
+                <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--fg)">Input Setoran</h2>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--fg2)">Tandai anggota yang sudah bayar setoran bulan ini</p>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-outline btn-sm" onclick="renderTabelSetoran()"><i class="fas fa-table"></i>Lihat Tabel Lengkap</button>
+            </div>
+        </div>
+        <div class="month-scroll" style="margin-bottom:16px;display:flex;gap:8px;padding-bottom:4px">
+            ${BULAN.map(b => `<div class="month-tab ${b===currentMonth?'active':''}" onclick="pilihBulan('${b}')">${BULAN_LABEL[b]}</div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-success" onclick="tandaiSemua(true)"><i class="fas fa-check-double"></i>Tandai Semua</button>
+            <button class="btn btn-sm btn-outline" onclick="tandaiSemua(false)"><i class="fas fa-xmark"></i>Hapus Semua</button>
+        </div>
+        <div class="card" id="setoran-list" style="margin-bottom:0"></div>
+    `;
+    renderSetoranList();
+}
+
+function pilihBulan(b) {
+    currentMonth = b;
+    document.querySelectorAll('.month-tab').forEach(t => t.classList.toggle('active', t.textContent === BULAN_LABEL[b]));
+    renderSetoranList();
+}
+
+function renderSetoranList() {
+    const list = document.getElementById('setoran-list');
+    if (!list) return;
+    const draft = setoranDraft[currentMonth] || {};
+    let jumlahBayar = 0;
+    let totalRp = 0;
+
+    const rows = data.anggota.map(a => {
+        const bayar = draft[a.id] || 0;
+        if (bayar > 0) { jumlahBayar++; totalRp += bayar * HARGA_PER_LOT; }
+        return `<div class="member-row" id="row-${a.id}">
+            <div class="avatar" style="background:${getAvatarColor(a.id)}">${getInitials(a.nama)}</div>
+            <div style="flex:1;min-width:0">
+                <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.nama}</div>
+                <div style="font-size:11px;color:var(--fg2)">${a.lot} lot &times; ${fmt(HARGA_PER_LOT)} = ${fmt(a.lot * HARGA_PER_LOT)}/bulan</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-shrink:0">
+                ${bayar > 0 ? `
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <input type="number" value="${bayar}" min="0" max="${a.lot}" style="width:52px;padding:4px 8px;font-size:13px;font-weight:700;text-align:center" 
+                            onchange="ubahLotDraft(${a.id}, this.value, ${a.lot})" onclick="event.stopPropagation()">
+                        <span style="font-size:12px;color:var(--fg2)">lot</span>
+                    </div>
+                    <span style="font-weight:800;color:var(--success);font-size:14px;min-width:100px;text-align:right">${fmt(bayar * HARGA_PER_LOT)}</span>
+                ` : `
+                    <span style="font-size:13px;color:var(--muted);min-width:160px;text-align:right">Belum bayar</span>
+                `}
+                <label class="toggle">
+                    <input type="checkbox" ${bayar > 0 ? 'checked' : ''} onchange="toggleSetoran(${a.id}, ${a.lot}, this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>`;
+    }).join('');
+
+    list.innerHTML = rows + `
+        <div class="sticky-bar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <div>
+                <span style="font-size:14px;font-weight:700;color:var(--fg)">Sudah bayar: <span style="color:var(--success)">${jumlahBayar}</span> / ${data.anggota.length}</span>
+                <span style="margin-left:16px;font-size:14px;font-weight:700;color:var(--fg)">Total: <span style="color:var(--accent-dark)">${fmt(totalRp)}</span></span>
+            </div>
+            <button class="btn btn-primary" onclick="simpanSetoran()"><i class="fas fa-save"></i>Simpan Setoran ${BULAN_LABEL[currentMonth]}</button>
+        </div>
+    `;
+}
+
+function toggleSetoran(aid, maxLot, checked) {
+    if (!setoranDraft[currentMonth]) setoranDraft[currentMonth] = {};
+    if (checked) {
+        setoranDraft[currentMonth][aid] = maxLot;
+    } else {
+        delete setoranDraft[currentMonth][aid];
+    }
+    renderSetoranList();
+}
+
+function ubahLotDraft(aid, val, maxLot) {
+    let v = parseInt(val) || 0;
+    v = Math.max(0, Math.min(v, maxLot));
+    if (!setoranDraft[currentMonth]) setoranDraft[currentMonth] = {};
+    if (v > 0) {
+        setoranDraft[currentMonth][aid] = v;
+    } else {
+        delete setoranDraft[currentMonth][aid];
+    }
+    renderSetoranList();
+}
+
+function tandaiSemua(val) {
+    setoranDraft[currentMonth] = {};
+    if (val) {
+        data.anggota.forEach(a => { setoranDraft[currentMonth][a.id] = a.lot; });
+    }
+    renderSetoranList();
+    showToast(val ? 'Semua anggota ditandai' : 'Semua tanda dihapus', 'info');
+}
+
+function simpanSetoran() {
+    data.setoran[currentMonth] = { ...setoranDraft[currentMonth] };
+    // Bersihkan entry yang 0
+    for (const k in data.setoran[currentMonth]) {
+        if (data.setoran[currentMonth][k] <= 0) delete data.setoran[currentMonth][k];
+    }
+    saveData();
+    const total = totalSetoranBulan(currentMonth);
+    showToast(`Setoran ${BULAN_LABEL[currentMonth]} disimpan: ${fmt(total)}`);
+    renderSetoranList();
+}
+
+function renderTabelSetoran() {
+    const el = document.getElementById('page-setoran');
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+            <div>
+                <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--fg)">Rekap Setoran Lengkap</h2>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--fg2)">Tabel semua anggota & bulan</p>
+            </div>
+            <button class="btn btn-outline" onclick="renderSetoran()"><i class="fas fa-arrow-left"></i>Kembali ke Input</button>
+        </div>
+        <div class="card">
+            <div style="overflow-x:auto;max-height:70vh;overflow-y:auto">
+                <table>
+                    <thead><tr>
+                        <th style="position:sticky;left:0;z-index:3;background:var(--accent-light)">No</th>
+                        <th style="position:sticky;left:40px;z-index:3;background:var(--accent-light);min-width:120px">Nama</th>
+                        <th style="position:sticky;left:160px;z-index:3;background:var(--accent-light)">Lot</th>
+                        ${BULAN.map(b => `<th style="min-width:100px;text-align:right">${BULAN_LABEL[b]}</th>`).join('')}
+                        <th style="text-align:right;min-width:110px;background:#FDE68A">JUMLAH</th>
+                    </tr></thead>
+                    <tbody>
+                        ${data.anggota.map((a, i) => {
+                            let total = 0;
+                            const cells = BULAN.map(b => {
+                                const lot = (data.setoran[b] || {})[a.id] || 0;
+                                const rp = lot * HARGA_PER_LOT;
+                                total += rp;
+                                return `<td style="text-align:right;font-weight:${rp>0?'700':'400'};color:${rp>0?'var(--success)':'var(--muted)'}">${rp > 0 ? fmt(rp) : '-'}</td>`;
+                            }).join('');
+                            return `<tr>
+                                <td style="position:sticky;left:0;background:var(--card);font-weight:600">${i+1}</td>
+                                <td style="position:sticky;left:40px;background:var(--card);font-weight:700">${a.nama}</td>
+                                <td style="position:sticky;left:160px;background:var(--card)"><span class="lot-badge">${a.lot}</span></td>
+                                ${cells}
+                                <td style="text-align:right;font-weight:900;color:var(--accent-dark);background:#FFFBEB">${fmt(total)}</td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:var(--accent-light)">
+                            <td colspan="3" style="font-weight:800;text-align:right;position:sticky;left:0;background:var(--accent-light);z-index:1">JUMLAH</td>
+                            ${BULAN.map(b => `<td style="text-align:right;font-weight:800;color:var(--accent-dark)">${fmt(totalSetoranBulan(b))}</td>`).join('')}
+                            <td style="text-align:right;font-weight:900;color:var(--accent-dark);background:#FDE68A">${fmt(totalSetoranKeseluruhan())}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// === RENDER: PINJAMAN ===
+function renderPinjaman() {
+    const el = document.getElementById('page-pinjaman');
+    const adaPinjaman = data.pinjaman.length > 0;
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <div>
+                <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--fg)">Pinjaman & Angsuran</h2>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--fg2)">${data.pinjaman.length} pinjaman aktif</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModalPinjaman()"><i class="fas fa-plus"></i>Tambah Pinjaman</button>
+        </div>
+        ${adaPinjaman ? data.pinjaman.map(p => {
+            const a = getAnggotaById(p.anggotaId);
+            const totalHarus = p.pokok + p.bunga;
+            const sudahBayar = totalAngsuranDibayar(p.id);
+            const sisa = totalHarus - sudahBayar;
+            const pct = Math.min(100, Math.round(sudahBayar / totalHarus * 100));
+            return `<div class="pinjaman-card" style="margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <div class="avatar" style="background:${getAvatarColor(p.anggotaId)};width:48px;height:48px;font-size:16px">${a ? getInitials(a.nama) : '??'}</div>
+                        <div>
+                            <div style="font-weight:800;font-size:16px">${a ? a.nama : 'Anggota Dihapus'}</div>
+                            <div style="font-size:12px;color:var(--fg2)">Pokok: ${fmt(p.pokok)} + Bunga: ${fmt(p.bunga)}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="btn btn-sm btn-success" onclick="openModalAngsuran(${p.id})"><i class="fas fa-plus"></i>Bayar Angsuran</button>
+                        <button class="btn btn-sm btn-danger" onclick="hapusPinjaman(${p.id})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+                    <div style="text-align:center;padding:12px;background:var(--bg);border-radius:12px">
+                        <div style="font-size:11px;color:var(--fg2);font-weight:600">HARUS BAYAR</div>
+                        <div style="font-size:18px;font-weight:900;color:var(--fg)">${fmt(totalHarus)}</div>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:var(--success-light);border-radius:12px">
+                        <div style="font-size:11px;color:var(--success);font-weight:600">SUDAH BAYAR</div>
+                        <div style="font-size:18px;font-weight:900;color:var(--success)">${fmt(sudahBayar)}</div>
+                    </div>
+                    <div style="text-align:center;padding:12px;background:${sisa>0?'var(--danger-light)':'var(--success-light)'};border-radius:12px">
+                        <div style="font-size:11px;color:${sisa>0?'var(--danger)':'var(--success)'};font-weight:600">SISA</div>
+                        <div style="font-size:18px;font-weight:900;color:${sisa>0?'var(--danger)':'var(--success)'}">${fmt(sisa)}</div>
+                    </div>
+                </div>
+                <div class="progress-bar" style="margin-bottom:12px"><div class="progress-fill" style="width:${pct}%;background:${pct>=100?'var(--success)':'var(--accent)'}"></div></div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                    ${BULAN.map(b => {
+                        const bayar = (data.angsuran[p.id] || {})[b] || 0;
+                        return `<div style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;background:${bayar>0?'var(--success-light)':'var(--bg)'};color:${bayar>0?'var(--success)':'var(--muted)'}">
+                            ${BULAN_LABEL[b].substring(0,3)}${bayar>0?': '+fmt(bayar):''}
+                        </div>`;
+                    }).join('')}
+                </div>
+            </div>`;
+        }).join('') : `
+            <div class="card" style="padding:60px 20px;text-align:center">
+                <i class="fas fa-hand-holding-dollar" style="font-size:48px;color:var(--border);margin-bottom:16px"></i>
+                <p style="font-size:16px;font-weight:600;color:var(--fg2);margin:0 0 4px">Belum ada pinjaman</p>
+                <p style="font-size:13px;color:var(--muted);margin:0">Klik tombol "Tambah Pinjaman" untuk mencatat pinjaman baru</p>
+            </div>
+        `}
+    `;
+}
+
+function openModalPinjaman() {
+    const options = data.anggota.map(a => `<option value="${a.id}">${a.nama} (${a.lot} lot)</option>`).join('');
+    openModal('Tambah Pinjaman Baru', `
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Anggota</label>
+            <select id="inp-pin-anggota"><option value="">-- Pilih Anggota --</option>${options}</select>
+        </div>
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Pokok Pinjaman</label>
+            <input type="number" id="inp-pin-pokok" min="0" placeholder="Contoh: 1500000">
+        </div>
+        <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Bunga</label>
+            <input type="number" id="inp-pin-bunga" min="0" placeholder="Contoh: 75000">
+        </div>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="simpanPinjaman()">Simpan Pinjaman</button>
+    `);
+}
+
+function simpanPinjaman() {
+    const anggotaId = parseInt(document.getElementById('inp-pin-anggota').value);
+    const pokok = parseInt(document.getElementById('inp-pin-pokok').value) || 0;
+    const bunga = parseInt(document.getElementById('inp-pin-bunga').value) || 0;
+    if (!anggotaId) { showToast('Pilih anggota terlebih dahulu', 'danger'); return; }
+    if (pokok <= 0) { showToast('Pokok pinjaman harus lebih dari 0', 'danger'); return; }
+    const pid = data.nextPinjamanId++;
+    data.pinjaman.push({ id: pid, anggotaId, pokok, bunga });
+    data.angsuran[pid] = {};
+    saveData();
+    closeModal();
+    showToast('Pinjaman baru ditambahkan');
+    renderPinjaman();
+}
+
+function hapusPinjaman(pid) {
+    const p = data.pinjaman.find(x => x.id === pid);
+    const a = getAnggotaById(p.anggotaId);
+    openModal('Hapus Pinjaman', `
+        <p style="margin:0;font-size:14px;color:var(--fg2)">Yakin ingin menghapus pinjaman <strong>${a ? a.nama : '?'}</strong> sebesar <strong>${fmt(p.pokok + p.bunga)}</strong>?</p>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-danger" onclick="konfirmasiHapusPinjaman(${pid})">Hapus</button>
+    `);
+}
+
+function konfirmasiHapusPinjaman(pid) {
+    data.pinjaman = data.pinjaman.filter(p => p.id !== pid);
+    delete data.angsuran[pid];
+    saveData();
+    closeModal();
+    showToast('Pinjaman dihapus', 'danger');
+    renderPinjaman();
+}
+
+function openModalAngsuran(pid) {
+    const p = data.pinjaman.find(x => x.id === pid);
+    const a = getAnggotaById(p.anggotaId);
+    const sisa = (p.pokok + p.bunga) - totalAngsuranDibayar(pid);
+    const options = BULAN.map(b => `<option value="${b}">${BULAN_LABEL[b]}</option>`).join('');
+    openModal(`Bayar Angsuran - ${a ? a.nama : '?'}`, `
+        <div style="padding:12px;background:var(--accent-light);border-radius:12px;margin-bottom:16px;font-size:13px;color:var(--accent-dark)">
+            <strong>Sisa pinjaman: ${fmt(sisa)}</strong> (dari total ${fmt(p.pokok + p.bunga)})
+        </div>
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Bulan</label>
+            <select id="inp-ang-bulan">${options}</select>
+        </div>
+        <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Jumlah Bayar</label>
+            <input type="number" id="inp-ang-jumlah" min="0" max="${sisa}" value="${sisa}" placeholder="Jumlah angsuran">
+        </div>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-success" onclick="simpanAngsuran(${pid})">Simpan Angsuran</button>
+    `);
+}
+
+function simpanAngsuran(pid) {
+    const bulan = document.getElementById('inp-ang-bulan').value;
+    const jumlah = parseInt(document.getElementById('inp-ang-jumlah').value) || 0;
+    if (jumlah <= 0) { showToast('Jumlah bayar harus lebih dari 0', 'danger'); return; }
+    if (!data.angsuran[pid]) data.angsuran[pid] = {};
+    data.angsuran[pid][bulan] = jumlah;
+    saveData();
+    closeModal();
+    showToast(`Angsuran ${BULAN_LABEL[bulan]} disimpan: ${fmt(jumlah)}`);
+    renderPinjaman();
+}
+
+// === RENDER: KAS ===
+function renderKas() {
+    const el = document.getElementById('page-kas');
+    const masuk = totalMasuk();
+    const keluar = totalKeluar();
+    const saldo = masuk - keluar;
+    const transactions = [...data.kas].reverse();
+
+    el.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <div>
+                <h2 style="margin:0;font-size:22px;font-weight:900;color:var(--fg)">Laporan Kas</h2>
+                <p style="margin:4px 0 0;font-size:13px;color:var(--fg2)">Arus kas masuk dan keluar</p>
+            </div>
+            <button class="btn btn-primary" onclick="openModalKas()"><i class="fas fa-plus"></i>Tambah Transaksi</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px" class="stat-grid">
+            <div class="stat-card" style="border-left:4px solid var(--success)">
+                <div style="font-size:12px;color:var(--fg2);font-weight:600;margin-bottom:4px">TOTAL MASUK</div>
+                <div style="font-size:24px;font-weight:900;color:var(--success)">${fmt(masuk)}</div>
+            </div>
+            <div class="stat-card" style="border-left:4px solid var(--danger)">
+                <div style="font-size:12px;color:var(--fg2);font-weight:600;margin-bottom:4px">TOTAL KELUAR</div>
+                <div style="font-size:24px;font-weight:900;color:var(--danger)">${fmt(keluar)}</div>
+            </div>
+            <div class="stat-card" style="border-left:4px solid ${saldo>=0?'#4F46E5':'var(--danger)'}">
+                <div style="font-size:12px;color:var(--fg2);font-weight:600;margin-bottom:4px">SALDO AKHIR</div>
+                <div style="font-size:24px;font-weight:900;color:${saldo>=0?'#4F46E5':'var(--danger)'}">${fmt(saldo)}</div>
+            </div>
+        </div>
+        <div class="card">
+            ${transactions.length > 0 ? transactions.map((k, i) => {
+                const isMasuk = k.masuk > 0;
+                const running = data.kas.slice(0, data.kas.length - i).reduce((t, x) => t + x.masuk - x.keluar, 0);
+                return `<div class="kas-row">
+                    <div style="width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:${isMasuk?'var(--success-light)':'var(--danger-light)'}">
+                        <i class="fas fa-arrow-${isMasuk?'down':'up'}" style="color:${isMasuk?'var(--success)':'var(--danger)'};font-size:14px"></i>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${k.keterangan || 'Tanpa keterangan'}</div>
+                        <div style="font-size:12px;color:var(--fg2)">${formatTanggal(k.tanggal)}</div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;margin:0 12px">
+                        ${isMasuk ? `<span style="color:var(--success);font-weight:700">+${fmt(k.masuk)}</span>` : `<span style="color:var(--danger);font-weight:700">-${fmt(k.keluar)}</span>`}
+                    </div>
+                    <div style="text-align:right;min-width:110px;flex-shrink:0">
+                        <div style="font-size:11px;color:var(--muted)">Saldo</div>
+                        <div style="font-weight:800;font-size:13px;color:var(--fg)">${fmt(running)}</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline" onclick="hapusKas(${k.id})" style="flex-shrink:0"><i class="fas fa-trash"></i></button>
+                </div>`;
+            }).join('') : `
+                <div style="padding:60px 20px;text-align:center">
+                    <i class="fas fa-wallet" style="font-size:48px;color:var(--border);margin-bottom:16px"></i>
+                    <p style="font-size:16px;font-weight:600;color:var(--fg2);margin:0 0 4px">Belum ada transaksi</p>
+                    <p style="font-size:13px;color:var(--muted);margin:0">Klik "Tambah Transaksi" untuk mencatat arus kas</p>
+                </div>
+            `}
+        </div>
+    `;
+}
+
+function formatTanggal(str) {
+    if (!str) return '-';
+    const d = new Date(str);
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function openModalKas() {
+    openModal('Tambah Transaksi Kas', `
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Tanggal</label>
+            <input type="date" id="inp-kas-tgl" value="${new Date().toISOString().split('T')[0]}">
+        </div>
+        <div style="margin-bottom:16px">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Jenis</label>
+            <select id="inp-kas-jenis" onchange="toggleKasJenis()">
+                <option value="masuk">Saldo Masuk</option>
+                <option value="keluar">Saldo Keluar</option>
+            </select>
+        </div>
+        <div style="margin-bottom:16px" id="kas-masuk-field">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Jumlah Masuk</label>
+            <input type="number" id="inp-kas-masuk" min="0" placeholder="Contoh: 2100000">
+        </div>
+        <div style="margin-bottom:16px;display:none" id="kas-keluar-field">
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Jumlah Keluar</label>
+            <input type="number" id="inp-kas-keluar" min="0" placeholder="Contoh: 1500000">
+        </div>
+        <div>
+            <label style="display:block;font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:6px">Keterangan</label>
+            <input type="text" id="inp-kas-ket" placeholder="Contoh: Setoran April, Pinjaman DUA, dll">
+        </div>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-primary" onclick="simpanKas()">Simpan Transaksi</button>
+    `);
+}
+
+function toggleKasJenis() {
+    const jenis = document.getElementById('inp-kas-jenis').value;
+    document.getElementById('kas-masuk-field').style.display = jenis === 'masuk' ? 'block' : 'none';
+    document.getElementById('kas-keluar-field').style.display = jenis === 'keluar' ? 'block' : 'none';
+}
+
+function simpanKas() {
+    const tanggal = document.getElementById('inp-kas-tgl').value;
+    const jenis = document.getElementById('inp-kas-jenis').value;
+    const masuk = jenis === 'masuk' ? (parseInt(document.getElementById('inp-kas-masuk').value) || 0) : 0;
+    const keluar = jenis === 'keluar' ? (parseInt(document.getElementById('inp-kas-keluar').value) || 0) : 0;
+    const keterangan = document.getElementById('inp-kas-ket').value.trim();
+    if (!tanggal) { showToast('Tanggal harus diisi', 'danger'); return; }
+    if (masuk <= 0 && keluar <= 0) { showToast('Jumlah harus lebih dari 0', 'danger'); return; }
+    if (!keterangan) { showToast('Keterangan harus diisi', 'danger'); return; }
+    data.kas.push({ id: data.nextKasId++, tanggal, masuk, keluar, keterangan });
+    // Urutkan berdasarkan tanggal
+    data.kas.sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+    saveData();
+    closeModal();
+    showToast('Transaksi kas disimpan');
+    renderKas();
+}
+
+function hapusKas(kid) {
+    openModal('Hapus Transaksi', `
+        <p style="margin:0;font-size:14px;color:var(--fg2)">Yakin ingin menghapus transaksi ini? Saldo kas akan diperbarui otomatis.</p>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-danger" onclick="konfirmasiHapusKas(${kid})">Hapus</button>
+    `);
+}
+
+function konfirmasiHapusKas(kid) {
+    data.kas = data.kas.filter(k => k.id !== kid);
+    saveData();
+    closeModal();
+    showToast('Transaksi dihapus', 'danger');
+    renderKas();
+}
+
+// === EXPORT CSV ===
+function exportCSV() {
+    let csv = 'No,Nama,Jumlah Lot,' + BULAN.join(',') + ',JUMLAH SETORAN\n';
+    data.anggota.forEach((a, i) => {
+        let total = 0;
+        const bulanVals = BULAN.map(b => {
+            const lot = (data.setoran[b] || {})[a.id] || 0;
+            const rp = lot * HARGA_PER_LOT;
+            total += rp;
+            return rp;
+        });
+        csv += `${i+1},"${a.nama}",${a.lot},${bulanVals.join(',')},${total}\n`;
+    });
+    // Total row
+    const totals = BULAN.map(b => totalSetoranBulan(b));
+    csv += `,"JUMLAH",${totalLot()},${totals.join(',')},${totalSetoranKeseluruhan()}\n`;
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Arisan_Gula_2026.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('File CSV berhasil di-download', 'info');
+}
+
+// === RESET DATA ===
+function resetData() {
+    openModal('Reset Semua Data', `
+        <div style="padding:16px;background:var(--danger-light);border-radius:12px;margin-bottom:8px">
+            <i class="fas fa-exclamation-triangle" style="color:var(--danger);margin-right:8px"></i>
+            <strong style="color:var(--danger)">Peringatan!</strong>
+        </div>
+        <p style="margin:0;font-size:14px;color:var(--fg2)">Semua data akan dikembalikan ke awal. Data anggota, setoran, pinjaman, dan kas akan direset. Tindakan ini tidak bisa dibatalkan.</p>
+    `, `
+        <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+        <button class="btn btn-danger" onclick="konfirmasiReset()">Ya, Reset Semua</button>
+    `);
+}
+
+function konfirmasiReset() {
+    data = getDefaultData();
+    saveData();
+    closeModal();
+    showToast('Data berhasil direset', 'info');
+    renderPage(currentPage);
+}
+
+// === INISIALISASI ===
+loadData();
+renderDashboard();
+
+// Responsive chart redraw
+window.addEventListener('resize', () => {
+    if (currentPage === 'dashboard') {
+        setTimeout(() => drawChart(), 100);
+    }
+});
 </script>
-
 </body>
 </html>
-
